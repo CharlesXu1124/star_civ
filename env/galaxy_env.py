@@ -374,7 +374,8 @@ class GalaxySimEnv(gym.Env):
             for attacker_id in attacker_ids:
                  attacker_civ = self.civilizations.get(attacker_id)
                  # Check if attacker still exists and can afford (simplified cost check)
-                 if attacker_civ and not attacker_civ.is_eliminated and attacker_civ.resources > EXPANSION_COST_FACTOR * 10:
+                 if attacker_civ and not attacker_civ.is_eliminated and attacker_civ.resources \
+                    > EXPANSION_COST_FACTOR * 10 + self.civilizations.get(current_owner_id).resources:
                       valid_attackers.append(attacker_civ)
 
             if not valid_attackers: continue # No one can actually afford to attack/claim
