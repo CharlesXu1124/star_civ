@@ -10,70 +10,7 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.env_util import make_vec_env
 
 from utils import Civilization, Star
-
-# --- Constants ---
-# Screen dimensions (optional for rendering)
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-RENDER_FPS = 15 # Lower FPS for rendering during evaluation
-
-# Galaxy properties
-NUM_STARS = 150 # Reduced for potentially faster simulation steps
-GALAXY_PADDING = 50
-
-# Star properties
-STAR_RADIUS = 3
-UNCLAIMED_COLOR = (100, 100, 100)
-DESTROYED_STAR_COLOR = (255, 0, 0)
-RESOURCE_INDICATOR_COLOR = (255, 255, 0)
-RESOURCE_INDICATOR_RADIUS = 1
-STAR_RESOURCE_PROBABILITY = 0.15
-MIN_STAR_RESOURCE = 50
-MAX_STAR_RESOURCE = 200
-STAR_MAX_VELOCITY = 0.03
-
-# Civilization properties
-NUM_CIVILIZATIONS = 5 # Total number of civs, including the agent
-CIV_COLORS = [ # Agent (Civ 0) will use the first color
-    (0, 255, 255), (255, 100, 0), (0, 200, 100),
-    (255, 200, 0), (150, 50, 200), (255, 50, 100),
-]
-
-INITIAL_RESOURCES = 500
-RESOURCE_INCOME_PER_STAR = 0.1
-EXPANSION_COST_FACTOR = 0.5
-INITIAL_EXPANSION_RADIUS = 5
-MAX_EXPANSION_RADIUS_FACTOR = 0.8
-
-# --- FTL Technology ---
-INITIAL_SLOW_EXPANSION_RATE = 0.01
-FTL_EXPANSION_RATE = 0.12
-FTL_DISCOVERY_BASE_PROB_PER_FRAME = 0.01
-FTL_DISCOVERY_SCALING_FACTOR_PER_AGE = 0.0000005
-MAX_FTL_DISCOVERY_PROB = 0.005
-
-# --- Civil War ---
-CIVIL_WAR_BASE_PROB_PER_FRAME = 0.0005
-CIVIL_WAR_SCALING_FACTOR_PER_STAR = 0.000001
-MAX_CIVIL_WAR_PROB = 0.5
-MIN_SPLIT_CIVS = 2
-MAX_SPLIT_CIVS = 3
-SPLIT_RESOURCE_FRACTION = 0.3
-
-# --- Dark Forest Strike ---
-DARK_FOREST_STRIKE_COST = 1500
-DARK_FOREST_STRIKE_PROBABILITY_PER_FRAME = 0.0001 # For non-agent civs
-MIN_STARS_FOR_STRIKE = 8 # Reduced min size
-MIN_RESOURCES_FOR_STRIKE_BUFFER = 500
-
-# --- RL Env Configuration ---
-AGENT_ID = 0 # The ID of the civilization controlled by the RL agent
-MAX_STEPS_PER_EPISODE = 2000 # Set a max episode length
-N_NEAREST_STARS_OBS = 10 # Number of nearest stars to include in observation
-
-# --- Visualization ---
-DASH_LENGTH = 4
-GAP_LENGTH = 3
+from utils.config import *
 
 
 def generate_random_color():

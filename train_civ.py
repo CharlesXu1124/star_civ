@@ -1,33 +1,7 @@
 import argparse
 from stable_baselines3 import PPO
 from env import GalaxySimEnv
-
-
-# --- Constants ---
-# Screen dimensions (optional for rendering)
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-RENDER_FPS = 15 # Lower FPS for rendering during evaluation
-
-# Galaxy properties
-NUM_STARS = 150 # Reduced for potentially faster simulation steps
-GALAXY_PADDING = 50
-
-# Star properties
-STAR_RADIUS = 3
-UNCLAIMED_COLOR = (100, 100, 100)
-DESTROYED_STAR_COLOR = (255, 0, 0)
-RESOURCE_INDICATOR_COLOR = (255, 255, 0)
-RESOURCE_INDICATOR_RADIUS = 1
-STAR_RESOURCE_PROBABILITY = 0.15
-MIN_STAR_RESOURCE = 50
-MAX_STAR_RESOURCE = 200
-STAR_MAX_VELOCITY = 0.03
-
-# --- Visualization ---
-DASH_LENGTH = 4
-GAP_LENGTH = 3
-
+from utils.config import *
 
 # --- Example Usage (Requires stable-baselines3) ---
 if __name__ == '__main__':
