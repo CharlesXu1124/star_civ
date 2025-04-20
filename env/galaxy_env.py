@@ -53,10 +53,9 @@ FTL_DISCOVERY_SCALING_FACTOR_PER_AGE = 0.0000005
 MAX_FTL_DISCOVERY_PROB = 0.005
 
 # --- Civil War ---
-CIVIL_WAR_BASE_PROB_PER_FRAME = 0.005
+CIVIL_WAR_BASE_PROB_PER_FRAME = 0.0005
 CIVIL_WAR_SCALING_FACTOR_PER_STAR = 0.000001
 MAX_CIVIL_WAR_PROB = 0.5
-MIN_STARS_FOR_CIVIL_WAR = 2 # Reduced min size
 MIN_SPLIT_CIVS = 2
 MAX_SPLIT_CIVS = 3
 SPLIT_RESOURCE_FRACTION = 0.3
@@ -143,7 +142,7 @@ class GalaxySimEnv(gym.Env):
         self.clock = None
 
         # Define action space: 0 = Passive Expand, 1 = Attempt Dark Forest Strike
-        self.action_space = spaces.Discrete(2)
+        self.action_space = spaces.Discrete(3)
 
         # Define observation space
         star_obs_size = 7
@@ -343,12 +342,23 @@ class GalaxySimEnv(gym.Env):
                     can_afford = civ.resources >= DARK_FOREST_STRIKE_COST + MIN_RESOURCES_FOR_STRIKE_BUFFER
                     is_large_enough = civ.get_strength(self.stars_dict) >= MIN_STARS_FOR_STRIKE
                     if can_afford and is_large_enough:
-                         potential_targets = [star for star_id, star in self.stars_dict.items()
-                                             if star.claimed_by_id != civ.id and not star.is_destroyed]
-                         if potential_targets:
-                             target_star = random.choice(potential_targets)
-                             civs_triggering_strike[civ_id] = target_star
-                             events_this_step['agent_strike_executed'] = True
+                        potential_targets = [star for star_id, star in self.stars_dict.items()
+                                            if star.claimed_by_id != civ.id and not star.is_destroyed]
+                        if potential_targets:
+                            target_star = random.choice(potential_targets)
+                            civs_triggering_strike[civ_id] = target_star
+                            events_this_step['agent_strike_executed'] = True
+                if action == 2: # Action 2: induce civil war
+                    can_afford = civ.resources >= 100
+                    if can_afford:
+                        potential_targets = [star for star_id, star in self.stars_dict.items()
+                                            if star.claimed_by_id != civ.id and not star.is_destroyed]
+                        if potential_targets and star.claimed_by_id is not None:
+                            target_star = random.choice(potential_targets)
+                            target_civ = self.civilizations.get(star.claimed_by_id)
+                            if target_civ:
+                                target_civ.civil_war_base_prob = max(target_civ.civil_war_base_prob * 10, 0.5)
+
             else: # Non-agent civs
                 strike_triggered, target_star = civ.consider_dark_forest_strike(self.stars_dict)
                 if strike_triggered: civs_triggering_strike[civ_id] = target_star
@@ -374,9 +384,10 @@ class GalaxySimEnv(gym.Env):
             for attacker_id in attacker_ids:
                  attacker_civ = self.civilizations.get(attacker_id)
                  # Check if attacker still exists and can afford (simplified cost check)
-                 if attacker_civ and not attacker_civ.is_eliminated and attacker_civ.resources \
-                    > EXPANSION_COST_FACTOR * 10 + self.civilizations.get(current_owner_id).resources:
-                      valid_attackers.append(attacker_civ)
+                 if self.civilizations.get(current_owner_id):
+                    if attacker_civ and not attacker_civ.is_eliminated and attacker_civ.resources \
+                        > EXPANSION_COST_FACTOR * 10 + self.civilizations.get(current_owner_id).resources:
+                        valid_attackers.append(attacker_civ)
 
             if not valid_attackers: continue # No one can actually afford to attack/claim
 

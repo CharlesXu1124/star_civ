@@ -81,6 +81,7 @@ class Civilization:
         self.has_ftl = initial_ftl
         self.last_action = 0 # Track agent's last action if needed
         self.current_expansion_targets = set() # Store IDs of stars being targeted this step
+        self.civil_war_base_prob = CIVIL_WAR_BASE_PROB_PER_FRAME
 
         home_star = stars_dict[home_star_id]
         if home_star.claimed_by_id != self.id:
@@ -115,7 +116,7 @@ class Civilization:
         # Civil War Check
         num_stars = self.get_strength(stars_dict)
         if num_stars >= MIN_STARS_FOR_CIVIL_WAR:
-            civil_war_prob = min(CIVIL_WAR_BASE_PROB_PER_FRAME + num_stars * CIVIL_WAR_SCALING_FACTOR_PER_STAR, MAX_CIVIL_WAR_PROB)
+            civil_war_prob = min(self.civil_war_base_prob + num_stars * CIVIL_WAR_SCALING_FACTOR_PER_STAR, MAX_CIVIL_WAR_PROB)
             if random.random() < civil_war_prob:
                 return True, ftl_discovered_this_step # Signal civil war
         return False, ftl_discovered_this_step # No civil war
